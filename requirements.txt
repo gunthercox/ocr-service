@@ -1,0 +1,5 @@
+flake8
+flask>=0.12,<0.13
+nose
+# pytesseract>0.1.8,<1.2
+git+git://github.com/madmaze/pytesseract.git@da908f0fcb0d6485e7d1e8fc8967859cfc848265#egg=pytesseract

@@ -8,7 +8,7 @@ import base64
 app = Flask(__name__)
 
 
-@app.route('/',methods=['POST'])
+@app.route('/', methods=['POST'])
 def index():
     request_json = request.get_json(force=True)
     image_string = request_json.get('image')
@@ -22,11 +22,11 @@ def index():
 
     image = Image.open(BytesIO(base64.urlsafe_b64decode(image_string)))
 
-    image_data = pytesseract.image_to_data(
+    image_text = pytesseract.image_to_string(
         image,
         lang='eng'
     )
 
     return jsonify({
-        'data': []
+        'text': image_text
     })

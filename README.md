@@ -23,3 +23,11 @@ Data will be returned in the following format:
     ]
 }
 ```
+
+## Running the container
+
+This application is fully Dockerized and can be started with docker-compose.
+
+```
+docker-compose up
+```

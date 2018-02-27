@@ -22,11 +22,12 @@ def index():
 
     image = Image.open(BytesIO(base64.urlsafe_b64decode(image_string)))
 
-    image_text = pytesseract.image_to_string(
+    image_data = pytesseract.image_to_data(
         image,
-        lang='eng'
+        lang='eng',
+        output_type=pytesseract.Output.DICT
     )
 
-    return jsonify({
-        'text': image_text
-    })
+    print(image_data)
+
+    return jsonify(image_data)

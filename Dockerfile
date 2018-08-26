@@ -1,13 +1,11 @@
-FROM ubuntu:17.10
+FROM python:3.7
 
 ENV PYTHONUNBUFFERED=1
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV FLASK_APP=app/api.py
 
-RUN apt-get update && apt-get install -y software-properties-common curl && add-apt-repository -y ppa:alex-p/tesseract-ocr
-RUN apt-get update && apt-get install -y tesseract-ocr
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3.6
+RUN apt update && apt install -y tesseract-ocr
 
 COPY ./requirements.txt /code/requirements.txt
 

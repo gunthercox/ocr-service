@@ -1,5 +1,4 @@
-flake8
+flake8<4.0
 flask>=1.0,<1.1
-nose
-# pytesseract>=1.2,<1.3
-git+git://github.com/madmaze/pytesseract.git@v0.2.1#egg=pytesseract
+nose<2.0
+pytesseract>=0.2.1,<0.3

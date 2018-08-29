@@ -5,7 +5,8 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ENV FLASK_APP=app/api.py
 
-RUN apt update && apt install -y tesseract-ocr
+RUN apt update && apt install -y tesseract-ocr && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /code/requirements.txt
 

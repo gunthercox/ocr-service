@@ -7,11 +7,9 @@ The service's expects json in the following format:
 
 ```
 {
-    'image': '63469ef70377ee9a23b7b8ec5'
+    'image': '<image byte content>'
 }
 ```
-
-where the image is a base 64 encoded image.
 
 Data will be returned in the following format:
 

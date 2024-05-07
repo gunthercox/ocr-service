@@ -4,3 +4,4 @@ nose<2.0
 pytesseract>=0.2.1,<0.3
 
 pillow>=6.2.3 # not directly required, pinned by Snyk to avoid a vulnerability
+werkzeug>=3.0.3 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -1,11 +1,14 @@
-FROM python:3.7-slim
+FROM python:3.11-slim
 
-ENV PYTHONUNBUFFERED=1
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-ENV FLASK_APP=app/api.py
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
+    FLASK_APP=app/api.py
 
-RUN apt update && apt install -y tesseract-ocr && \
+RUN apt-get update && apt-get install -y tesseract-ocr && \
     rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /code/requirements.txt

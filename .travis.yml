@@ -20,7 +20,7 @@ before_script:
 
 script:
   - sudo docker-compose exec app flake8
-  - sudo docker-compose exec app nosetests
+  - sudo docker-compose exec app python -m unittest
 
 after_script:
   - docker-compose down

@@ -18,18 +18,18 @@ jobs:
 
       - name: Build and start services
         run: |
-          docker-compose build
-          docker-compose up -d
+          docker compose build
+          docker compose up -d
 
       - name: Run flake8
         run: |
-          docker-compose exec -T app flake8
+          docker compose exec -T app flake8
 
       - name: Run unittests
         run: |
-          docker-compose exec -T app python -m unittest
+          docker compose exec -T app python -m unittest
 
       - name: Tear down services
         if: always()
         run: |
-          docker-compose down
+          docker compose down

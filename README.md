@@ -5,7 +5,7 @@ that can be accessed via a REST API.
 
 The service's expects json in the following format:
 
-```
+```json
 {
     'image': '<image byte content>'
 }
@@ -13,7 +13,7 @@ The service's expects json in the following format:
 
 Data will be returned in the following format:
 
-```
+```json
 {
     "text": [
         "Line of text one",
@@ -24,8 +24,8 @@ Data will be returned in the following format:
 
 ## Running the container
 
-This application is fully Dockerized and can be started with docker-compose.
+This application is fully Dockerized and can be started with docker compose.
 
-```
-docker-compose up
+```bash
+docker compose up -d
 ```

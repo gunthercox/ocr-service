@@ -21,11 +21,12 @@ def index():
 
     Expects a POST request with:
       - a file field named 'image' (the image to process)
-      - an optional form field 'lang' to specify OCR language(s) (e.g., 'eng', 'jpn', 'fra', or 'eng+fra').
+      - an optional form field 'lang' to specify OCR language(s)
+        (e.g., 'eng', 'jpn', 'fra', or 'eng+fra').
         If not provided, defaults to 'eng'.
 
     Example (using curl):
-        curl -X POST -F "image=@/path/to/image.png" -F "lang=jpn" http://localhost:5000/
+        curl -X POST -F "image=@/img.png" -F "lang=jpn" http://localhost:5000/
 
     Returns the extracted text in JSON format.
 

@@ -94,3 +94,31 @@ class ApiTestCase(TestCase):
             ),
             response.json['text']
         )
+
+    def test_post_image_english_french_text(self):
+        """
+        Test posting an image with both English and French text using
+        lang=eng+fra.
+        """
+        eng_fra_image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '03_image.png'
+        )
+
+        with open(eng_fra_image_path, 'rb') as img_file:
+            response = self.client.post('/', data={
+                'image': img_file,
+                'lang': 'eng+fra'
+            })
+
+        self.assertTrue(response.status_code, 200)
+        self.assertIn('text', response.json)
+
+        self.assertIn(
+            'The weather is beautiful today.',
+            response.json['text']
+        )
+        self.assertIn(
+            "Le temps est magnifique aujourd'hui.",
+            response.json['text']
+        )

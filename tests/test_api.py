@@ -1,17 +1,19 @@
 from unittest import TestCase
 from app import api
+import os
 
 
 class ApiTestCase(TestCase):
+    """
+    Test suite for OCR API endpoints.
+    """
 
     def setUp(self):
-        import os
-
         self.client = api.app.test_client()
 
         test_directory = os.path.dirname(os.path.abspath(__file__))
 
-        self.image_path = os.path.join(test_directory, 'image.png')
+        self.image_path = os.path.join(test_directory, '01_image.png')
 
     def test_data_missing(self):
         """
@@ -65,5 +67,30 @@ class ApiTestCase(TestCase):
         )
         self.assertIn(
             'and headed off to work, listening to',
+            response.json['text']
+        )
+
+    def test_post_image_japanese_text(self):
+        """
+        Test posting an image with Japanese text.
+        """
+        japanese_image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '02_image.png'
+        )
+
+        with open(japanese_image_path, 'rb') as img_file:
+            response = self.client.post('/', data={
+                'image': img_file,
+                'lang': 'jpn'
+            })
+
+        self.assertTrue(response.status_code, 200)
+        self.assertIn('text', response.json)
+        self.assertEqual(
+            (
+                'これはOCRソフトウ\n\nェエアのテストテキス\nトです\n\nKore wa '
+                'oshiarusofuto uea no\n\ntesuto tekisutodesu\n'
+            ),
             response.json['text']
         )

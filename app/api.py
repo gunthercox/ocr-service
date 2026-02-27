@@ -10,9 +10,9 @@ Recognition) on uploaded images using Tesseract via pytesseract.
 from flask import Flask, request, jsonify
 from PIL import Image
 import pytesseract
+import logging
 
 app = Flask(__name__)
-
 
 @app.route('/', methods=['POST'])
 def index():
@@ -73,11 +73,11 @@ def index():
     try:
         image_text = pytesseract.image_to_string(
             image,
+        app.logger.exception("Tesseract OCR failed for requested language(s): %s", lang)
             lang=lang
         )
     except pytesseract.TesseractError as e:
         return jsonify(error={
-            'tesseract': str(e),
             'lang': f"Failed to use language(s): {lang}"
         }), 400
 

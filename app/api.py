@@ -34,6 +34,27 @@ def index():
     -------
     flask.Response
         JSON response containing the extracted text or an error message.
+
+    Supported Languages
+    ------------------
+    All Tesseract language and script packs installed in the container are supported. For the full list, see the Dockerfile in this repository. Common examples include:
+        - English (eng)
+        - French (fra)
+        - Japanese (jpn)
+        - German (deu)
+        - Spanish (spa)
+        - Chinese (chi_sim, chi_tra)
+        - Russian (rus)
+        - Arabic (ara)
+        - and many more (see Dockerfile for included language packs).
+
+    Supported File Formats
+    ---------------------
+    All image formats supported by the Python Pillow library, including:
+        - PNG
+        - JPEG/JPG
+        - BMP
+        - TIFF
     """
     if 'image' not in request.files:
         return jsonify(

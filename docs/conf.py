@@ -43,3 +43,11 @@ intersphinx_mapping = {
 # Enable source link in HTML output
 html_show_sourcelink = True
 html_copy_source = True
+
+html_theme_options = {
+    'github_user': 'gunthercox',
+    'github_repo': 'ocr-service',
+    'github_button': True,
+    'github_banner': True,
+    'github_type': 'star',
+}

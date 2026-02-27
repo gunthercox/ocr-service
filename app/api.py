@@ -16,6 +16,7 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
+
 @app.route('/', methods=['POST'])
 def index():
     """
@@ -77,10 +78,14 @@ def index():
     try:
         image_text = pytesseract.image_to_string(
             image,
-        app.logger.exception("Tesseract OCR failed for requested language(s): %s", lang)
             lang=lang
         )
     except pytesseract.TesseractError as e:
+        app.logger.exception(
+            "Tesseract OCR failed for requested language(s): %s",
+            lang,
+            exc_info=e
+        )
         return jsonify(error={
             'lang': f"Failed to use language(s): {lang}"
         }), 400

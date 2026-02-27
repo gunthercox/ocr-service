@@ -122,3 +122,29 @@ class ApiTestCase(TestCase):
             "Le temps est magnifique aujourd'hui.",
             response.json['text']
         )
+
+    def test_post_handwriting(self):
+        """
+        Test posting an image with handwriting.
+
+        NOTE: tesseract's handwriting recognition is not ideal, this test is
+        more of a benchmark to see if improvements occur over time.
+        """
+        handwriting_image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '04_image.jpg'
+        )
+
+        with open(handwriting_image_path, 'rb') as img_file:
+            response = self.client.post('/', data={
+                'image': img_file,
+                'lang': 'eng'
+            })
+
+        self.assertTrue(response.status_code, 200)
+        self.assertIn('text', response.json)
+
+        self.assertIn(
+            'Sample hoindwritin\nAnne hands 9\n',
+            response.json['text']
+        )

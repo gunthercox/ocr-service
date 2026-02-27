@@ -37,7 +37,9 @@ def index():
 
     Supported Languages
     ------------------
-    All Tesseract language and script packs installed in the container are supported. For the full list, see the Dockerfile in this repository. Common examples include:
+    All Tesseract language and script packs installed in the container are
+    supported. For the full list, see the Dockerfile in this repository.
+    Common examples include:
         - English (eng)
         - French (fra)
         - Japanese (jpn)

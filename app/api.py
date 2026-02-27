@@ -3,8 +3,8 @@
 OCR Service API
 ===============
 
-This module provides a Flask API for performing OCR (Optical Character Recognition)
-on uploaded images using Tesseract via pytesseract.
+This module provides a Flask API for performing OCR (Optical Character
+Recognition) on uploaded images using Tesseract via pytesseract.
 """
 
 from flask import Flask, request, jsonify

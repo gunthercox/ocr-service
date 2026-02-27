@@ -1,13 +1,13 @@
-{% extends "!layout.html" %}
+{% extends "alabaster/layout.html" %}
 
 {% block extrahead %}
   {{ super() }}
   <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-XXXXXXXXX-X');
-  </script>
+{% endblock %}
+
+{% block sidebarextra %}
+  {{ super() }}
+  <div style="background-color: #f0f0f0; color: #888; text-align: center; margin: 1em 0; padding: 0.5em; border-radius: 4px; font-size: 1.1em;">
+    Ad
+  </div>
 {% endblock %}

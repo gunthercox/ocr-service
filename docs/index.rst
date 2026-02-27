@@ -1,5 +1,5 @@
-Welcome to ocr-service's documentation!
-=======================================
+ocr-service documentation
+=========================
 
 .. toctree::
    :maxdepth: 2
@@ -7,5 +7,9 @@ Welcome to ocr-service's documentation!
 
    api
    architecture
+   deployment
    modules
    development
+
+   GitHub ↗ <https://github.com/gunthercox/ocr-service>
+   Docker Hub ↗ <https://hub.docker.com/r/gunthercox/ocr-service>

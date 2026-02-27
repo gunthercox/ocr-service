@@ -1,6 +1,9 @@
 Development
 ===========
 
+This project can be cloned from https://github.com/gunthercox/ocr-service
+and run locally for development and testing.
+
 Running the container
 ---------------------
 

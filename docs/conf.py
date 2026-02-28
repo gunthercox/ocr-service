@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = 'ocr-service'
 copyright = '2026, Gunther Cox'
 author = 'Gunther Cox'
-release = '1.1.2'
+release = '1.2.2'
 
 extensions = [
     'sphinx.ext.autodoc',

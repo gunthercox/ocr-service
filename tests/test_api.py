@@ -3,6 +3,11 @@ from app import api
 import os
 
 
+import unittest
+# Show full diff in unittest
+unittest.util._MAX_LENGTH = 2000
+
+
 class ApiTestCase(TestCase):
     """
     Test suite for OCR API endpoints.
@@ -146,5 +151,36 @@ class ApiTestCase(TestCase):
 
         self.assertIn(
             'Sample hoindwritin\nAnne hands 9\n',
+            response.json['text']
+        )
+
+    def test_image_text_orientation(self):
+        """
+        Test posting an image with rotated text to see if orientation is
+        detected correctly.
+
+        NOTE: tesseract seems to struggle with rotated text, this test is
+        intended to esablish a benchmark for future improvements in orientation
+        detection.
+        """
+        rotated_image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '05_image.png'
+        )
+
+        with open(rotated_image_path, 'rb') as img_file:
+            response = self.client.post('/', data={
+                'image': img_file,
+                'lang': 'eng'
+            })
+
+        self.assertTrue(response.status_code, 200)
+        self.assertIn('text', response.json)
+
+        self.assertEqual(
+            (
+                "wom LXaL NMOG aaisan\n\nauist wn\nVv o\nE =\n2 Normal Text "
+                "=\n& | el\nA rr\n~ 4\n\nflipped around ROTATED 90°\n"
+            ),
             response.json['text']
         )

@@ -12,6 +12,15 @@ ENV PYTHONUNBUFFERED=1 \
 # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html
 
 RUN apt-get update && apt-get install -y \
+    # Required for PaddleOCR
+    libgomp1 \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    # Tesseract OCR and language packs
     tesseract-ocr \
     tesseract-ocr-afr \
     tesseract-ocr-all \
@@ -181,8 +190,12 @@ COPY ./requirements.txt /code/requirements.txt
 
 RUN pip install -r /code/requirements.txt
 
+# Pre-download PaddleOCR models during build to avoid first-request delays
+# TODO: Add others?
+RUN python3 -c "from paddleocr import PaddleOCR; PaddleOCR(use_angle_cls=True, lang='en', show_log=False)"
+
 COPY . /code
 
 WORKDIR /code
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app.api:app"]

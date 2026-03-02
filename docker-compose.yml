@@ -4,3 +4,5 @@ services:
     build: .
     ports:
       - "6000:5000"
+    volumes:
+      - .:/code

@@ -7,7 +7,30 @@ on:
     branches: [ main, master ]
 
 jobs:
-  pages:
+  build:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install sphinx sphinx-rtd-theme
+    - name: Build documentation
+      run: sphinx-build -b dirhtml docs html
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      if: github.event_name == 'push'
+      with:
+        path: html
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -17,7 +40,4 @@ jobs:
       id-token: write
     steps:
     - id: deployment
-      uses: sphinx-notes/pages@v3
-      with:
-        pyproject_extras: 'dev'
-        sphinx_build_options: '-b dirhtml'
+      uses: actions/deploy-pages@v2

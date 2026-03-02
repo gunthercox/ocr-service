@@ -21,7 +21,7 @@ jobs:
     - name: Build documentation
       run: sphinx-build -b dirhtml docs html
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       if: github.event_name == 'push'
       with:
         path: html

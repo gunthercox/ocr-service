@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# Build argument to control whether to install dev dependencies
+ARG INSTALL_DEV=false
+
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_ROOT_USER_ACTION=ignore \
@@ -187,8 +190,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /code/requirements.txt
+COPY ./requirements-dev.txt /code/requirements-dev.txt
 
-RUN pip install -r /code/requirements.txt
+RUN if [ "$INSTALL_DEV" = "true" ]; then \
+        pip install -r /code/requirements-dev.txt; \
+    else \
+        pip install -r /code/requirements.txt; \
+    fi
 
 # Pre-download PaddleOCR models during build to avoid first-request delays
 # TODO: Add others?

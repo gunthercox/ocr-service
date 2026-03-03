@@ -15,6 +15,41 @@ https://gunthercox.com/ocr-service/
 
 https://hub.docker.com/r/gunthercox/ocr-service
 
+### Available Image Variants
+
+The service provides three Docker image variants to suit different deployment needs:
+
+1. **Combined (default)** - Both engines available
+   ```bash
+   docker pull gunthercox/ocr-service:latest
+   docker pull gunthercox/ocr-service:1.0.0
+   ```
+   - Python 3.12
+   - Includes both Tesseract and PaddleOCR
+   - Largest image size (includes 140+ Tesseract language packs)
+   - Use when you need flexibility to choose engines per request
+
+2. **Tesseract only** - Smaller image for document OCR
+   ```bash
+   docker pull gunthercox/ocr-service:latest-tesseract
+   docker pull gunthercox/ocr-service:1.0.0-tesseract
+   ```
+   - Python 3.12
+   - Includes only Tesseract with all language packs
+   - Use for standard document OCR workloads
+
+3. **PaddleOCR only** - Smallest image, newest Python
+   ```bash
+   docker pull gunthercox/ocr-service:latest-paddleocr
+   docker pull gunthercox/ocr-service:1.0.0-paddleocr
+   ```
+   - Python 3.13
+   - Includes only PaddleOCR (no Tesseract language packs)
+   - Smallest image size
+   - Use for rotated/multi-directional text or when image size matters
+
+**Note**: Engine-specific images will return an error if you request an unavailable engine. For example, the Tesseract-only image will reject requests when `engine=paddleocr` is specified in the request body.
+
 ## API Usage
 
 The service expects a multipart/form-data request with the following fields:

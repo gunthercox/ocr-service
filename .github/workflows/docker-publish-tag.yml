@@ -10,6 +10,15 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: tesseract
+            suffix: -tesseract
+          - target: paddleocr
+            suffix: -paddleocr
+          - target: all
+            suffix: ""
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,15 +35,18 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/ocr-service
+          flavor: |
+            suffix=${{ matrix.suffix }},onlatest=true
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest
 
-      - name: Build and push
+      - name: Build and push ${{ matrix.target }}
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          target: ${{ matrix.target }}
           tags: ${{ steps.meta.outputs.tags }} # Uses the tags generated above
           labels: ${{ steps.meta.outputs.labels }}

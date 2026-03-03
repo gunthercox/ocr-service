@@ -10,6 +10,18 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: tesseract
+            tag_suffix: -tesseract
+            python_version: "3.12"
+          - target: paddleocr
+            tag_suffix: -paddleocr
+            python_version: "3.13"
+          - target: all
+            tag_suffix: ""
+            python_version: "3.12"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,9 +35,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push ${{ matrix.target }}
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ocr-service:latest
+          target: ${{ matrix.target }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/ocr-service:latest${{ matrix.tag_suffix }}

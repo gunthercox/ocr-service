@@ -24,7 +24,7 @@ API Layer
 - Built with Flask.
 - Exposes a single POST endpoint (`/`) for image uploads.
 - Accepts multipart/form-data requests with the following fields:
-  
+
   - ``image`` (required): The image file to process
   - ``engine`` (optional): 'tesseract' or 'paddleocr' (default: 'paddleocr')
   - ``lang`` (optional): Language code (format depends on engine)
@@ -35,7 +35,34 @@ API Layer
 OCR Engine Routing
 ------------------
 
-The service supports two OCR engines:
+The service supports two OCR engines and can be deployed with different combinations:
+
+Engine Availability
+~~~~~~~~~~~~~~~~~~~
+
+The available engines are determined by the Docker image variant deployed:
+
+- **Combined image** (default): Both engines available
+- **Tesseract-only image**: Only Tesseract available
+- **PaddleOCR-only image**: Only PaddleOCR available
+
+**Engine Validation**: When a request is received, the service validates that the requested engine is available in the current deployment. If an unavailable engine is requested, the service returns a 400 error with a message indicating which engines are available.
+
+Example error response from a Tesseract-only image when PaddleOCR is requested:
+
+.. code-block:: json
+
+   {
+     "error": {
+       "engine": "Engine 'paddleocr' is not available in this image variant. Available engines: tesseract. Please use an image with the 'paddleocr' engine installed."
+     }
+   }
+
+**Conditional Imports**: OCR engine libraries are installed and imported conditionally. This means:
+
+- Tesseract-only images don't install PaddleOCR dependencies
+- PaddleOCR-only images don't install pytesseract dependencies
+- Combined images install dependencies for both
 
 **Tesseract Engine (via pytesseract)**
 
@@ -85,6 +112,7 @@ Error Handling
 --------------
 
 - If the `image` field is missing, a 400 error is returned with a descriptive message.
+- If the requested engine is not available in the deployed image variant, a 400 error is returned indicating available engines.
 - If the `engine` parameter is invalid, a 400 error is returned listing supported engines.
 - If the file size exceeds 10MB, a 413 error is returned.
 - If Content-Type is not multipart/form-data, a 400 error is returned.

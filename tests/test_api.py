@@ -34,9 +34,9 @@ class HealthEndpointTests(ApiTestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class OcrApiTests(ApiTestCase):
+class TesseractOcrTests(ApiTestCase):
     """
-    Test suite for OCR API endpoints.
+    Test suite for Tesseract OCR engine.
     """
 
     def test_data_missing(self):
@@ -95,11 +95,10 @@ class OcrApiTests(ApiTestCase):
         self.assertGreater(len(regions), 0)
 
         # Verify region structure
-        if len(regions) > 0:
-            region = regions[0]
-            self.assertIn('bbox', region)
-            self.assertIn('text', region)
-            self.assertIn('confidence', region)
+        region = regions[0]
+        self.assertIn('bbox', region)
+        self.assertIn('text', region)
+        self.assertIn('confidence', region)
 
         self.assertIn(
             'woke up this morning',
@@ -219,6 +218,48 @@ class OcrApiTests(ApiTestCase):
             response.json['text']
         )
 
+    def test_tesseract_returns_regions_with_bboxes(self):
+        """
+        Test that Tesseract engine returns regions with bounding boxes.
+        """
+        image_path = os.path.join(self.test_directory, '01_image.png')
+
+        response = self.client.post('/', data={
+            'image': open(image_path, 'rb'),
+            'engine': 'tesseract'
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('text', response.json)
+        self.assertIn('regions', response.json)
+
+        # Tesseract now returns regions with bounding boxes
+        regions = response.json['regions']
+        self.assertIsInstance(regions, list)
+        self.assertGreater(len(regions), 0)
+
+        # Verify first region has proper structure
+        region = regions[0]
+        self.assertIn('bbox', region)
+        self.assertIn('text', region)
+        self.assertIn('confidence', region)
+
+        # Verify bbox structure (4 corner points)
+        bbox = region['bbox']
+        self.assertIsInstance(bbox, list)
+        self.assertEqual(len(bbox), 4)
+
+        # Verify confidence is in 0.0-1.0 range
+        self.assertIsInstance(region['confidence'], (float, int))
+        self.assertGreaterEqual(region['confidence'], 0.0)
+        self.assertLessEqual(region['confidence'], 1.0)
+
+
+class OcrApiTests(ApiTestCase):
+    """
+    Test suite for OCR API endpoints.
+    """
+
     def test_paddleocr_data_missing(self):
         """
         Test that PaddleOCR engine returns an error if the request body is
@@ -313,6 +354,32 @@ class OcrApiTests(ApiTestCase):
         self.assertIsInstance(regions, list)
         # Note: We don't assert specific text since PaddleOCR may detect
         # differently than Tesseract, but it should find something
+
+    def test_post_handwriting(self):
+        """
+        Test posting an image with handwriting.
+
+        NOTE: PaddleOCR's handwriting recognition is not ideal, this test is
+        more of a benchmark to see if improvements occur over time.
+        """
+        handwriting_image_path = os.path.join(
+            self.test_directory, '04_image.jpg'
+        )
+
+        with open(handwriting_image_path, 'rb') as img_file:
+            response = self.client.post('/', data={
+                'image': img_file,
+                'engine': 'paddleocr',
+                'lang': 'en'
+            })
+
+        self.assertTrue(response.status_code, 200)
+        self.assertIn('text', response.json)
+
+        self.assertIn(
+            'handwritn famde',
+            response.json['text']
+        )
 
     def test_file_size_limit(self):
         """
@@ -422,39 +489,3 @@ class OcrApiTests(ApiTestCase):
                 "Please use an image with the 'paddleocr' engine installed",
                 error_msg
             )
-
-    def test_tesseract_returns_regions_with_bboxes(self):
-        """
-        Test that Tesseract engine returns regions with bounding boxes.
-        """
-        image_path = os.path.join(self.test_directory, '01_image.png')
-
-        response = self.client.post('/', data={
-            'image': open(image_path, 'rb'),
-            'engine': 'tesseract'
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('text', response.json)
-        self.assertIn('regions', response.json)
-
-        # Tesseract now returns regions with bounding boxes
-        regions = response.json['regions']
-        self.assertIsInstance(regions, list)
-        self.assertGreater(len(regions), 0)
-
-        # Verify first region has proper structure
-        region = regions[0]
-        self.assertIn('bbox', region)
-        self.assertIn('text', region)
-        self.assertIn('confidence', region)
-
-        # Verify bbox structure (4 corner points)
-        bbox = region['bbox']
-        self.assertIsInstance(bbox, list)
-        self.assertEqual(len(bbox), 4)
-
-        # Verify confidence is in 0.0-1.0 range
-        self.assertIsInstance(region['confidence'], (float, int))
-        self.assertGreaterEqual(region['confidence'], 0.0)
-        self.assertLessEqual(region['confidence'], 1.0)

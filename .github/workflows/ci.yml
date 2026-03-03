@@ -21,8 +21,10 @@ jobs:
 
       - name: Build and start services
         run: |
-          docker compose build
+          INSTALL_DEV=true docker compose build
           docker compose up -d
+        env:
+          INSTALL_DEV: true
 
       - name: Run flake8
         run: |

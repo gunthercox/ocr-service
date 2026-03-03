@@ -6,8 +6,8 @@ ocr-service documentation
    :caption: Contents:
 
    api
-   architecture
    deployment
+   architecture
    modules
    development
 

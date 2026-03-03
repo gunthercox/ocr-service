@@ -25,7 +25,6 @@ ENV PYTHONUNBUFFERED=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
     FLASK_APP=app/api.py \
-    AVAILABLE_ENGINES=tesseract
 
 # For a list of available Tesseract language packs, see:
 # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html
@@ -229,7 +228,6 @@ ENV PYTHONUNBUFFERED=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
     FLASK_APP=app/api.py \
-    AVAILABLE_ENGINES=paddleocr
 
 RUN apt-get update && apt-get install -y \
     # Required for PaddleOCR
@@ -278,7 +276,6 @@ ENV PYTHONUNBUFFERED=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
     FLASK_APP=app/api.py \
-    AVAILABLE_ENGINES=tesseract,paddleocr
 
 # For a list of available Tesseract language packs, see:
 # https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html

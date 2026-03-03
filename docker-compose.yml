@@ -11,5 +11,3 @@ services:
       - "6000:5000"
     volumes:
       - .:/code
-    environment:
-      - AVAILABLE_ENGINES=tesseract,paddleocr

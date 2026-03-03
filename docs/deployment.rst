@@ -2,6 +2,8 @@ Deployment
 ==========
 
 The OCR service can be deployed using Docker for easy setup and portability.
+Tagged builds are available on Docker Hub:
+https://hub.docker.com/r/gunthercox/ocr-service
 
 Deployment using docker-compose
 -------------------------------

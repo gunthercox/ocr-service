@@ -13,7 +13,9 @@ import logging
 import os
 
 # Configuration from environment variables
-MAX_FILE_SIZE_BYTES = int(os.environ.get('MAX_FILE_SIZE_MB', '10')) * 1024 * 1024
+MAX_FILE_SIZE_BYTES = (
+    int(os.environ.get('MAX_FILE_SIZE_MB', '10')) * 1024 * 1024
+)
 
 # Detect which OCR engines are actually available by attempting imports
 # and verifying runtime availability
@@ -41,6 +43,7 @@ logging.basicConfig(level=logging.INFO)
 # Lazy initialization for PaddleOCR to avoid race conditions with
 # multiple workers
 _paddle_ocr_instance = None
+
 
 def get_paddle_ocr():
     """
@@ -256,9 +259,10 @@ def index():
 
     # Validate file size
     if request.content_length and request.content_length > MAX_FILE_SIZE_BYTES:
+        limit_mb = MAX_FILE_SIZE_BYTES // (1024 * 1024)
         return jsonify(
             error={
-                'image': f'File size exceeds {MAX_FILE_SIZE_BYTES // (1024 * 1024)}MB limit.'
+                'image': f'File size exceeds {limit_mb}MB limit.'
             }
         ), 413
 
@@ -274,7 +278,10 @@ def index():
     if not AVAILABLE_ENGINES:
         return jsonify(
             error={
-                'engine': 'No OCR engines are available. Please use a Docker image with at least one engine installed.'
+                'engine': (
+                    'No OCR engines are available. Please use a Docker '
+                    'image with at least one engine installed.'
+                )
             }
         ), 500
 
@@ -288,9 +295,10 @@ def index():
         return jsonify(
             error={
                 'engine': (
-                    f"Engine '{engine}' is not available in this image variant. "
-                    f"Available engines: {', '.join(AVAILABLE_ENGINES)}. "
-                    f"Please use an image with the '{engine}' engine installed."
+                    f"Engine '{engine}' is not available in this image "
+                    f"variant. Available engines: "
+                    f"{', '.join(AVAILABLE_ENGINES)}. Please use an image "
+                    f"with the '{engine}' engine installed."
                 )
             }
         ), 400

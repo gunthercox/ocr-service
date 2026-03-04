@@ -18,7 +18,7 @@ jobs:
         python-version: '3.12'
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r requirements-base.txt
         pip install sphinx sphinx-rtd-theme
     - name: Build documentation
       run: sphinx-build -b dirhtml docs html

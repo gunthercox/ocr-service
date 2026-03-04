@@ -10,7 +10,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-test:
+  lint-and-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and start services
+      - name: Build dev environment
         run: |
           INSTALL_DEV=true docker compose build
           docker compose up -d
@@ -38,3 +38,140 @@ jobs:
         if: always()
         run: |
           docker compose down
+
+  test-combined-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build combined image (both engines)
+        run: |
+          docker build --target all -t ocr-service:all .
+
+      - name: Start combined service
+        run: |
+          docker run -d --name ocr-combined -p 5000:5000 ocr-service:all
+
+      - name: Wait for service to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5000/health; do sleep 2; done'
+
+      - name: Test both engines are available
+        run: |
+          # Test Tesseract engine
+          response=$(docker exec ocr-combined python -c "from app.api import AVAILABLE_ENGINES; print(','.join(AVAILABLE_ENGINES))")
+          echo "Available engines: $response"
+          if [[ ! "$response" == *"tesseract"* ]] || [[ ! "$response" == *"paddleocr"* ]]; then
+            echo "ERROR: Both engines should be available in combined image"
+            exit 1
+          fi
+
+      - name: Tear down combined service
+        if: always()
+        run: |
+          docker stop ocr-combined || true
+          docker rm ocr-combined || true
+
+  test-tesseract-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build tesseract image
+        run: |
+          docker build --target tesseract -t ocr-service:tesseract .
+
+      - name: Start tesseract service
+        run: |
+          docker run -d --name ocr-tesseract -p 5001:5000 ocr-service:tesseract
+
+      - name: Wait for service to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5001/health; do sleep 2; done'
+
+      - name: Test only Tesseract is available
+        run: |
+          response=$(docker exec ocr-tesseract python -c "from app.api import AVAILABLE_ENGINES; print(','.join(AVAILABLE_ENGINES))")
+          echo "Available engines: $response"
+          if [[ ! "$response" == *"tesseract"* ]]; then
+            echo "ERROR: Tesseract should be available"
+            exit 1
+          fi
+          if [[ "$response" == *"paddleocr"* ]]; then
+            echo "ERROR: PaddleOCR should not be available in tesseract-only image"
+            exit 1
+          fi
+
+      - name: Test Tesseract OCR functionality
+        run: |
+          # Create a simple test - the health endpoint should work
+          status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5001/health)
+          if [ "$status" != "200" ]; then
+            echo "ERROR: Health endpoint failed"
+            exit 1
+          fi
+          echo "Tesseract image is functional"
+
+      - name: Tear down tesseract service
+        if: always()
+        run: |
+          docker stop ocr-tesseract || true
+          docker rm ocr-tesseract || true
+
+  test-paddleocr-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build paddleocr image
+        run: |
+          docker build --target paddleocr -t ocr-service:paddleocr .
+
+      - name: Start paddleocr service
+        run: |
+          docker run -d --name ocr-paddleocr -p 5002:5000 ocr-service:paddleocr
+
+      - name: Wait for service to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5002/health; do sleep 2; done'
+
+      - name: Test only PaddleOCR is available
+        run: |
+          response=$(docker exec ocr-paddleocr python -c "from app.api import AVAILABLE_ENGINES; print(','.join(AVAILABLE_ENGINES))")
+          echo "Available engines: $response"
+          if [[ ! "$response" == *"paddleocr"* ]]; then
+            echo "ERROR: PaddleOCR should be available"
+            exit 1
+          fi
+          if [[ "$response" == *"tesseract"* ]]; then
+            echo "ERROR: Tesseract should not be available in paddleocr-only image"
+            exit 1
+          fi
+
+      - name: Test PaddleOCR functionality
+        run: |
+          # Create a simple test - the health endpoint should work
+          status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5002/health)
+          if [ "$status" != "200" ]; then
+            echo "ERROR: Health endpoint failed"
+            exit 1
+          fi
+          echo "PaddleOCR image is functional"
+
+      - name: Tear down paddleocr service
+        if: always()
+        run: |
+          docker stop ocr-paddleocr || true
+          docker rm ocr-paddleocr || true

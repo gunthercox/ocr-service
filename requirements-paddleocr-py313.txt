@@ -1,0 +1,5 @@
+-r requirements-base.txt
+paddleocr==2.9.2
+paddlepaddle==3.0.0
+setuptools>=65.5.0
+numpy>=1.23.0,<3.0.0

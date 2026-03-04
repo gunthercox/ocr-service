@@ -240,13 +240,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements-base.txt /code/requirements-base.txt
-COPY ./requirements-paddleocr.txt /code/requirements-paddleocr.txt
+COPY ./requirements-paddleocr-py313.txt /code/requirements-paddleocr-py313.txt
 COPY ./requirements-dev.txt /code/requirements-dev.txt
 
 RUN if [ "$INSTALL_DEV" = "true" ]; then \
         pip install -r /code/requirements-dev.txt; \
     else \
-        pip install -r /code/requirements-paddleocr.txt; \
+        pip install -r /code/requirements-paddleocr-py313.txt; \
     fi
 
 # Pre-download PaddleOCR models during build to avoid first-request delays

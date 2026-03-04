@@ -252,7 +252,7 @@ RUN if [ "$INSTALL_DEV" = "true" ]; then \
 # Pre-download PaddleOCR models during build to avoid first-request delays
 # NOTE: Additional models could be added here, or an initialization step could
 # be implemented to download models after container startup.
-RUN python3 -c "from paddleocr import PaddleOCR; PaddleOCR(use_angle_cls=True, lang='en', show_log=False)"
+RUN python3 -c "from paddleocr import PaddleOCR; PaddleOCR(use_textline_orientation=True, lang='en')"
 
 COPY . /code
 

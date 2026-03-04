@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ pathto('_static/silktide-consent-manager.css', 1) }}">
   <script src="{{ pathto('_static/silktide-consent-manager.js', 1) }}"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3019790405701706" crossorigin="anonymous"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-733BJS6NWQ"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GL3C43WRQ7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -17,7 +17,7 @@
         ad_personalization: localStorage.getItem('silktideCookieChoice_advertising') === 'true' ? 'granted' : 'denied',
     });
     gtag('js', new Date());
-    gtag('config', 'G-733BJS6NWQ');
+    gtag('config', 'G-GL3C43WRQ7');
   </script>
 {% endblock %}
 
@@ -65,7 +65,7 @@
         {
           id: "analytics",
           name: "Analytics",
-          description: "<p>These cookies are necessary for the website to function properly and cannot be switched off. They help with things like logging in and setting your privacy preferences.</p>",
+          description: "<p>These cookies help us improve the site by tracking which pages are most popular and how visitors move around the site. They collect anonymous information about site usage.</p>",
           defaultValue: true,
           required: false,
           onAccept: function() {
@@ -85,7 +85,7 @@
         {
           id: "advertising",
           name: "Advertising",
-          description: "<p>These cookies help us improve the site by tracking which pages are most popular and how visitors move around the site.</p>",
+          description: "<p>These cookies are used to deliver personalized advertisements and measure the effectiveness of ad campaigns. They may be set by our advertising partners.</p>",
           defaultValue: true,
           required: false,
           onAccept: function() {

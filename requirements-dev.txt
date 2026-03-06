@@ -4,3 +4,4 @@
 # Development and testing dependencies
 flake8>=7.3,<8.0
 sphinx>=6.1.0,<9.2.0
+sphinx-sitemap>=2.5.0

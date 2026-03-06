@@ -1,9 +1,17 @@
 API
 ===
 
-This document provides a reference for the REST API of the OCR service.
-It describes the available endpoints, their expected inputs and outputs,
-and any relevant details for using the API effectively.
+Complete REST API reference for the OCR service. Learn how to extract text from images using Tesseract or PaddleOCR engines through simple HTTP POST requests. This API supports multipart/form-data uploads, multiple languages, and returns structured JSON with text and bounding box coordinates.
+
+Overview
+--------
+
+The OCR REST API provides two primary endpoints:
+
+* **POST /** - Main OCR endpoint for text extraction from images
+* **GET /health** - Health check endpoint for monitoring and load balancers
+
+All responses are JSON formatted with detailed text extraction results including confidence scores and bounding box coordinates for each detected text region.
 
 Endpoint: /
 -----------

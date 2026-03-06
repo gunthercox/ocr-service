@@ -1,0 +1,6 @@
+# robots.txt for ocr-service documentation
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://gunthercox.com/ocr-service/sitemap.xml

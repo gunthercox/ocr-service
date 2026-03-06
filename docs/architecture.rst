@@ -1,6 +1,8 @@
 Architecture
 ============
 
+Technical architecture and design overview of the OCR service REST API. This document explains the modular design, component interactions, data flow, and engine routing logic for the Tesseract and PaddleOCR text recognition service.
+
 Overview
 --------
 

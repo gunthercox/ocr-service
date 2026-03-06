@@ -19,6 +19,18 @@
     gtag('js', new Date());
     gtag('config', 'G-GL3C43WRQ7');
   </script>
+
+  {% if canonical_url %}
+  <link rel="canonical" href="{{ canonical_url() }}" />
+  {% endif %}
+
+  {# SEO: Open Graph meta tags for social sharing #}
+  <meta property="og:title" content="{{ title|striptags|e }}{% if title %} - {% endif %}{{ docstitle|e }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ canonical_url() if canonical_url else pageurl }}" />
+  <meta property="og:site_name" content="OCR Service Documentation" />
+  {# Meta description is injected by meta_descriptions extension #}
+  {{ metatags }}
 {% endblock %}
 
 {% block sidebarextra %}

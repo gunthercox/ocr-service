@@ -1,9 +1,11 @@
 Deployment
 ==========
 
-The OCR service can be deployed using Docker for easy setup and portability.
-Tagged builds are available on Docker Hub:
-https://hub.docker.com/r/gunthercox/ocr-service
+Deploy the OCR REST API service using Docker for production environments. This guide covers Docker deployment, docker-compose orchestration, image variant selection, and security best practices for running Tesseract and PaddleOCR text recognition services.
+
+The OCR service is available as pre-built Docker images on Docker Hub, optimized for different use cases and deployment scenarios.
+
+**Docker Hub Repository**: https://hub.docker.com/r/gunthercox/ocr-service
 
 Image Variants
 --------------

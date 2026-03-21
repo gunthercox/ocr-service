@@ -1,7 +1,8 @@
 ocr-service documentation
 =========================
 
-**OCR Service** is a production-ready REST API for optical character recognition (OCR) that supports both **Tesseract** and **PaddleOCR** engines. Extract text from images with high accuracy using a simple HTTP API. Deploy easily with Docker for document processing, invoice scanning, multi-language text recognition, and automated data extraction workflows.
+**OCR Service** is a production-ready REST API for optical character recognition (OCR) that supports both **Tesseract** and **PaddleOCR** engines.
+Extract text from images with high accuracy using a simple HTTP API. Deploy easily with Docker for document processing, invoice scanning, multi-language text recognition, and automated data extraction workflows.
 
 Key Features
 ------------
@@ -11,6 +12,7 @@ Key Features
 * **140+ Languages**: Comprehensive language support via Tesseract language packs
 * **Docker Ready**: Pre-built images on Docker Hub with variant options
 * **Production Grade**: Health checks, error handling, and security best practices included
+* **Actively Maintained & Secured**: Containers are actively monitored for vulnerabilities using GitHub's security suite: https://github.com/gunthercox/ocr-service/security
 
 Quick Start
 -----------

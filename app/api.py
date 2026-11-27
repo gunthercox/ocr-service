@@ -8,9 +8,10 @@ Recognition) on uploaded images.
 """
 
 from flask import Flask, request, jsonify
-from PIL import Image
+from PIL import Image, ImageOps
 import logging
 import os
+import threading
 
 # Configuration from environment variables
 MAX_FILE_SIZE_BYTES = (
@@ -40,21 +41,22 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
-# Lazy initialization for PaddleOCR to avoid race conditions with
-# multiple workers
-_paddle_ocr_instance = None
+# Thread-safe cache for PaddleOCR instances keyed by language
+_paddle_ocr_instances = {}
+_paddle_ocr_lock = threading.Lock()
 
 
-def get_paddle_ocr():
+def get_paddle_ocr(lang='en'):
     """
-    Get or initialize the global PaddleOCR instance.
+    Get or initialize a thread-safe cached PaddleOCR instance for the specified language.
     """
-    global _paddle_ocr_instance
-    if _paddle_ocr_instance is None:
-        _paddle_ocr_instance = PaddleOCR(
-            use_angle_cls=True, lang='en', show_log=False
-        )
-    return _paddle_ocr_instance
+    if lang not in _paddle_ocr_instances:
+        with _paddle_ocr_lock:
+            if lang not in _paddle_ocr_instances:
+                _paddle_ocr_instances[lang] = PaddleOCR(
+                    use_angle_cls=True, lang=lang, show_log=False
+                )
+    return _paddle_ocr_instances[lang]
 
 
 def _process_with_tesseract(image, lang='eng'):
@@ -315,6 +317,7 @@ def index():
 
     try:
         image = Image.open(request.files['image'])
+        image = ImageOps.exif_transpose(image)
     except Exception as e:
         app.logger.exception(
             "Failed to open image file",
@@ -332,7 +335,6 @@ def index():
         try:
             # Process with Tesseract and get regions with bounding boxes
             result = _process_with_tesseract(image, lang)
-            return jsonify(result)
         except pytesseract.TesseractError as e:
             app.logger.exception(
                 "Tesseract OCR failed for requested language(s): %s",
@@ -344,30 +346,9 @@ def index():
             }), 400
 
     else:  # paddleocr
-        # Reinitialize PaddleOCR if language changes (for optimal performance)
-        # Note: In production, consider caching OCR instances per language
         try:
-            if lang != 'en':
-                ocr_instance = PaddleOCR(
-                    use_angle_cls=True, lang=lang, show_log=False
-                )
-            else:
-                ocr_instance = get_paddle_ocr()
-        except Exception as e:
-            app.logger.exception(
-                "Failed to initialize PaddleOCR for language: %s",
-                lang,
-                exc_info=e
-            )
-            return jsonify(error={
-                'lang': f"Failed to use language: {lang}"
-            }), 400
-
-        try:
-            # Process with PaddleOCR
+            ocr_instance = get_paddle_ocr(lang)
             result = _process_with_paddleocr(image, ocr_instance)
-            return jsonify(result)
-
         except Exception as e:
             app.logger.exception(
                 "PaddleOCR failed for language: %s",
@@ -380,6 +361,35 @@ def index():
                     'valid.'
                 )
             }), 400
+
+    # Include image dimension metadata in response
+    result['image_width'] = image.width
+    result['image_height'] = image.height
+    result['engine'] = engine
+
+    return jsonify(result)
+
+
+@app.route('/engines', methods=['GET'])
+def engines():
+    """
+    Returns available OCR engines installed in this service instance.
+
+    Example (using curl):
+        curl http://localhost:5000/engines
+
+    Returns
+    -------
+    flask.Response
+        JSON response containing:
+        - available_engines: List of available engine names (e.g., ['tesseract', 'paddleocr'])
+        - default_engine: Default engine used when 'engine' form parameter is omitted
+    """
+    default_engine = AVAILABLE_ENGINES[0] if AVAILABLE_ENGINES else None
+    return jsonify({
+        'available_engines': AVAILABLE_ENGINES,
+        'default_engine': default_engine
+    })
 
 
 @app.route('/health', methods=['GET'])

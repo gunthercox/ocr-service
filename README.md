@@ -73,7 +73,7 @@ curl -X POST -F "image=@example.png" -F "engine=paddleocr" -F "lang=ch" http://l
 
 ### Response Format
 
-Data will be returned in the following format:
+Data will be returned in the following format (including image dimensions and auto EXIF-transposed orientation):
 
 ```json
 {
@@ -84,6 +84,36 @@ Data will be returned in the following format:
             "text": "Detected text",
             "confidence": 0.95
         }
-    ]
+    ],
+    "image_width": 3024,
+    "image_height": 4032,
+    "engine": "paddleocr"
 }
 ```
+
+### Checking Available Engines
+
+```bash
+curl http://localhost:5000/engines
+```
+
+Response:
+```json
+{
+    "available_engines": ["tesseract", "paddleocr"],
+    "default_engine": "tesseract"
+}
+```
+
+## Engine Selection Recommendations
+
+- **PaddleOCR**: Recommended for camera photos, mobile uploads, receipts, and rotated text. Automatic EXIF rotation transposes camera orientations before processing.
+- **Tesseract**: Recommended for standard, upright flatbed scan documents.
+
+# TODO:
+
+* Implement features from issues on GitHub
+* Add method of authorization
+* Rate limiting
+* Auto detect languages
+* Async queue processing
